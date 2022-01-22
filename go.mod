@@ -1,3 +1,3 @@
-module github/Krisloveless/kdu
+module github.com/Krisloveless/kdu
 
 go 1.17
