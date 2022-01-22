@@ -13,7 +13,10 @@ import (
 	"time"
 )
 
-// kdu: with gracefully shutdown
+// kdu: linux-command-like du
+/*
+	this program triggers a large amount of goroutines, with graceful shutdown
+*/
 
 func dirents(dir string) []fs.FileInfo {
 	files, err := ioutil.ReadDir(dir)
