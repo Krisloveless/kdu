@@ -27,13 +27,15 @@ func dirents(dir string) []fs.FileInfo {
 	return files
 }
 
-func walkDir(dir string, filesizes *fileSizeChannel, wg *sync.WaitGroup) {
+func walkDir(dir string, filesizes *fileSizeChannel, wg *sync.WaitGroup, FDLock chan struct{}) {
 	defer wg.Done()
+	// block fd
+	FDLock <- struct{}{}
 	for _, entry := range dirents(dir) {
 		if entry.IsDir() {
 			newPath := filepath.Join(dir, entry.Name())
 			wg.Add(1)
-			go walkDir(newPath, filesizes, wg)
+			go walkDir(newPath, filesizes, wg, FDLock)
 		} else {
 			if filesizes.isClosed {
 				// interrupted
@@ -42,6 +44,8 @@ func walkDir(dir string, filesizes *fileSizeChannel, wg *sync.WaitGroup) {
 			filesizes.c <- entry.Size()
 		}
 	}
+	<-FDLock
+
 }
 
 type fileSizeChannel struct {
@@ -55,7 +59,8 @@ func main() {
 	defer stop()
 	// to inform wg.Wait()
 	waitCh := make(chan struct{})
-
+	maxFD := 3434
+	FDLock := make(chan struct{}, maxFD)
 	flag.Parse()
 	dir := flag.Args()
 	if len(dir) == 0 {
@@ -68,7 +73,9 @@ func main() {
 	fileSizes := fileSizeChannel{c: make(chan int64), isClosed: false}
 	for _, value := range dir {
 		wg.Add(1)
-		go walkDir(value, &fileSizes, &wg)
+		FDLock <- struct{}{}
+		go walkDir(value, &fileSizes, &wg, FDLock)
+		<-FDLock
 	}
 
 	go func() {
