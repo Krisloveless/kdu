@@ -80,7 +80,7 @@ func main() {
 			fileNo++
 			total += value
 		}
-		fmt.Printf("number of files: %v, size: %.2f GB, time elapsed: %v\n", fileNo, float64(total)/10e9, time.Since(start))
+		fmt.Printf("number of files: %v, size: %.2f GB, time elapsed: %v\n", fileNo, float64(total)/1e9, time.Since(start))
 	}()
 
 	go func() {
