@@ -73,9 +73,7 @@ func main() {
 	fileSizes := fileSizeChannel{c: make(chan int64), isClosed: false}
 	for _, value := range dir {
 		wg.Add(1)
-		FDLock <- struct{}{}
 		go walkDir(value, &fileSizes, &wg, FDLock)
-		<-FDLock
 	}
 
 	go func() {
