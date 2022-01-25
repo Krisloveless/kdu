@@ -1,4 +1,4 @@
-package main
+package kdu
 
 import (
 	"context"
@@ -53,7 +53,7 @@ type fileSizeChannel struct {
 	c        chan int64
 }
 
-func main() {
+func Kdu() {
 	start := time.Now()
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, os.Kill)
 	defer stop()
