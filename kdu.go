@@ -31,7 +31,9 @@ func walkDir(dir string, filesizes *fileSizeChannel, wg *sync.WaitGroup, FDLock 
 	defer wg.Done()
 	// block fd
 	FDLock <- struct{}{}
-	for _, entry := range dirents(dir) {
+	files := dirents(dir)
+	<-FDLock
+	for _, entry := range files {
 		if entry.IsDir() {
 			newPath := filepath.Join(dir, entry.Name())
 			wg.Add(1)
@@ -41,11 +43,10 @@ func walkDir(dir string, filesizes *fileSizeChannel, wg *sync.WaitGroup, FDLock 
 				// interrupted
 				return
 			}
-			filesizes.c <- entry.Size()
+			pushToFileChannel(FDLock, filesizes, dir, entry)
+			//
 		}
 	}
-	<-FDLock
-
 }
 
 type fileSizeChannel struct {
