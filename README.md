@@ -1,8 +1,11 @@
 # kdu
-A concurrent du program  📺
+
+*A concurrent du program* ![localhost](https://user-images.githubusercontent.com/15829091/151237736-339bca80-8a4e-4246-a70b-2b5cfc61885c.gif)
+
 
 # Current known issue
 **file size != file size on disk** 🚬
+
 
 Todos: 
 
