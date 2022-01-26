@@ -86,6 +86,7 @@ func Kdu() {
 			fileNo++
 			total += value
 		}
+		// todo: add human readable time
 		fmt.Printf("number of files: %v, size: %.2f GB, time elapsed: %v\n", fileNo, float64(total)/1e9, time.Since(start))
 	}()
 
