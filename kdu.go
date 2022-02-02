@@ -54,6 +54,24 @@ type fileSizeChannel struct {
 	c        chan int64
 }
 
+func humanreadablePrint(num int64, size int64, duration time.Duration) {
+	if num != -1 {
+		fmt.Printf("number of files: %v\n", num)
+	}
+	if size < 1000 {
+		fmt.Printf("size: %v B\n", size)
+	} else if size >= 1000 && size < 1e6 {
+		fmt.Printf("size: %v KB\n", float64(size)/1e3)
+	} else if size >= 1e6 && size < 1e9 {
+		fmt.Printf("size: %v MB\n", float64(size)/1e6)
+	} else {
+		fmt.Printf("size: %v GB\n", float64(size)/1e9)
+	}
+	if duration > 0 {
+		fmt.Printf("time elapsed: %v\n", duration)
+	}
+}
+
 func Kdu() {
 	start := time.Now()
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, os.Kill)
@@ -86,8 +104,9 @@ func Kdu() {
 			fileNo++
 			total += value
 		}
-		// todo: add human readable time
-		fmt.Printf("number of files: %v, size: %.2f GB, time elapsed: %v\n", fileNo, float64(total)/1e9, time.Since(start))
+		// todo: add human readable print
+		humanreadablePrint(fileNo, total, time.Since(start))
+		// fmt.Printf("number of files: %v, size: %.2f GB, time elapsed: %v\n", fileNo, float64(total)/1e9, time.Since(start))
 	}()
 
 	go func() {
